@@ -1,0 +1,7 @@
+{
+    "test-browser": "safari",
+    "test-env": "stage",
+
+    "domain-dev": "http://www.python.org",
+    "domain-stage": "http://www.python.org"
+}

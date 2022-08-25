@@ -1,0 +1,8 @@
+---
+test1:
+ search_term: Beach
+ search_result: Beach
+test2:
+ search_term: Mountain
+ search_result: Mountain
+...
