@@ -2,14 +2,17 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 
-class BaseDriver():
-    def __init__(self, driver):
+class BasePage():
+    def __init__(self, driver, domain):
         self.driver = driver
+        self.domain = domain
 
-    # Put common methods here like scrolling
-
+    # Methods common to all pages
     def getPageTitle(self):
         return self.driver.title
+
+    def getCurrentUrl(self):
+        return self.domain.current_url
 
     def  wait_for_element_to_be_clickable(self, locator_type, locator):
         wait = WebDriverWait(self.driver, 10)

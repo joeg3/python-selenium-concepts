@@ -1,6 +1,7 @@
-from base.base_driver import BaseDriver
+from pages.BasePage import BasePage
 
-class SearchResults(BaseDriver):
-    def __init__(self, driver):
-        super().__init__(driver)
+class SearchResults(BasePage):
+    def __init__(self, driver, domain):
+        super().__init__(driver, domain)
         self.driver = driver
+        self.domain = domain

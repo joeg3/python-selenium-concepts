@@ -2,6 +2,6 @@
     "test-browser": "safari",
     "test-env": "stage",
 
-    "domain-dev": "http://www.python.org",
-    "domain-stage": "http://www.python.org"
+    "domain-dev": "http://www.google.com",
+    "domain-stage": "http://www.google.com"
 }

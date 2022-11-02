@@ -15,6 +15,11 @@ valid_env = ['dev', 'stage']
 default_browser = 'firefox'
 default_env = 'stage'
 
+def pytest_addoption(parser):
+    # action="store" stores value in a variable of the same name as the option
+    parser.addoption("--browser", action="store", default="firefox", choices=("firefox", "safari"), help="Browser name, options are: 'firefox', 'safari'. Default is firefox")
+    parser.addoption("--env", action="store", default="", help="Test environment name, options are: 'dev', 'stage'. Default is dev")
+
 @pytest.fixture
 def setup(request):
     print('\n*********** Entering conftest.py setup()')
@@ -26,24 +31,18 @@ def setup(request):
     yield
     driver.close()
 
-@pytest.fixture(scope='class')
-def domain(config):
-    print('\n*********** Entering conftest.py domain()')
-    desiredEnv = config['test-env']
-
-    if desiredEnv == 'dev':
-        u = config['domain-dev']
-    else:
-        u = config['domain-stage']
-
-    print('Exiting conftest.py domain()')
-    return u
-
 @pytest.fixture(scope='session')
 def config(request):
     print('\n*********** Entering conftest.py config()')
-    #cli_browser = request.config.getoption("--browser")
-    #cli_env = request.config.getoption("--env")
+    print('\n*** Values auto stored from cmd line ***')
+    #print('browser: ', browser)
+
+    cli_browser = request.config.getoption("--browser")
+    cli_env = request.config.getoption("--env")
+
+    print('********** cli_browser', cli_browser)
+    print('********** cli_env', cli_env)
+    #print("))))))))))))))))))))value of env", env)
 
     # Start with defaults
     tgt_browser = 'firefox'
@@ -63,12 +62,29 @@ def config(request):
 
     if tgt_env in valid_env:
         config['test-env'] = tgt_env
+
+    print('Browser: ', config['test-browser'])
+    print('Env: ', config['test-env'])
     print('Exiting conftest.py config()')
     return config
 
+@pytest.fixture(scope='class')
+def domain(config):
+    print('\n*********** Entering conftest.py domain()')
+    desiredEnv = config['test-env']
+
+    if desiredEnv == 'dev':
+        u = config['domain-dev']
+    else:
+        u = config['domain-stage']
+
+    print('\n*********** Domain: ', u)
+    print('\n*********** Exiting conftest.py domain()')
+    return u
+
 @pytest.fixture(scope='session')
-def browser(config):
-    print('\n*********** Entering conftest.py browser()')
+def driver(config):
+    print('\n*********** Entering conftest.py driver()')
     desiredBrowser = config['test-browser']
 
     if desiredBrowser == 'firefox':
@@ -87,4 +103,4 @@ def browser(config):
     yield b
     b.close() # Closes currenly open window, leaves others open, execution process of driver remains active
     # b .quit() # Closes all open windows, terminates execution process of driver
-    print('Exiting conftest.py browser()')
+    print('Exiting conftest.py driver()')

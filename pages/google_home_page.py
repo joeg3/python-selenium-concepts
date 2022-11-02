@@ -1,15 +1,19 @@
+from xml import dom
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 
-from base.base_driver import BaseDriver
+from pages.BasePage import BasePage
 from pages.google_search_results_page import SearchResults
 
-class HomePage(BaseDriver):
-    def __init__(self, driver):
-        super().__init__(driver)
+class HomePage(BasePage):
+    def __init__(self, driver, domain):
+        super().__init__(driver, domain)
         self.driver = driver
+        self.domain = domain
+
+    url_path = ''
 
     # Locators
     SEARCH_FIELD = 'q'
@@ -35,7 +39,7 @@ class HomePage(BaseDriver):
     def googleSearch(self, txt):
         self.enterSearchFieldText(txt)
         self.clickSearchButton()
-        search_result_page = SearchResults(self.driver)
+        search_result_page = SearchResults(self.driver, self.domain)
         return search_result_page
 
     # Original way we did it. Not sure if breaking out into SEARCH_FIELD, getSearchField(), and enterSearchFieldText() is worth it
@@ -47,3 +51,10 @@ class HomePage(BaseDriver):
     def click_search(self):
         submit_button = self.driver.find_elements(By.NAME, 'btnK')[-1] # There are two 'btnK' elements, find_elements() gets a list, and [-1] returns the last one
         submit_button.click()
+
+    # Actions
+    def load(self):
+        self.driver.get(self.get_landing_page_url())
+
+    def get_landing_page_url(self):
+        return self.domain + self.url_path
