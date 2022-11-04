@@ -26,6 +26,8 @@ def test_google_search(driver, domain):
     home_page = HomePage(driver, domain)
     home_page.load()
     home_page.wait_for_element_to_be_clickable(By.NAME, 'q')
+
+
     #home_page.wait_for_presence_of_all_elements(By.XPATH, "//span[contains(text(),'Non Stop') or contains(text(),'2 Stop')]")
         
     # Here we have a call for each element

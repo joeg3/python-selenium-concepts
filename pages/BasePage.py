@@ -14,6 +14,21 @@ class BasePage():
     def getCurrentUrl(self):
         return self.domain.current_url
 
+    def maximizeWindow(self):
+        self.driver.maximize_window()
+
+    def minimizeWindow(self):
+        self.driver.minimize_window()
+
+    def refresh(self):
+        self.driver.refresh()
+
+    def back(self):
+        self.driver.back()
+
+    def forward(self):
+        self.driver.forward()
+
     def  wait_for_element_to_be_clickable(self, locator_type, locator):
         wait = WebDriverWait(self.driver, 10)
         element = wait.until(EC.element_to_be_clickable((locator_type, locator)))
