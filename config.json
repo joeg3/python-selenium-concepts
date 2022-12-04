@@ -3,5 +3,18 @@
     "test-env": "stage",
 
     "domain-dev": "http://www.google.com",
-    "domain-stage": "http://www.google.com"
+    "domain-stage": "http://www.google.com",
+
+    "domain-locator1-dev": "https://rahulshettyacademy.com/angularpractice",
+    "domain-locator1-stage": "https://rahulshettyacademy.com/angularpractice",
+    "domain-locator2-dev": "https://rahulshettyacademy.com/client",
+    "domain-locator2-stage": "https://rahulshettyacademy.com/client",
+    "domain-locator3-dev": "https://rahulshettyacademy.com/dropdownsPractise",
+    "domain-locator3-stage": "https://rahulshettyacademy.com/dropdownsPractise",
+    "domain-locator4-dev": "https://rahulshettyacademy.com/AutomationPractice",
+    "domain-locator4-stage": "https://rahulshettyacademy.com/AutomationPractice",
+    "domain-locator5-dev": "https://rahulshettyacademy.com/seleniumPractise/#/",
+    "domain-locator5-stage": "https://rahulshettyacademy.com/seleniumPractise/#/",
+    "domain-locator6-dev": "https://the-internet.herokuapp.com",
+    "domain-locator6-stage": "https://the-internet.herokuapp.com"
 }
