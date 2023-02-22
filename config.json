@@ -1,5 +1,5 @@
 {
-    "test-browser": "firefox",
+    "test-browser": "chrome",
     "test-env": "stage",
 
     "domain-dev": "http://www.google.com",
