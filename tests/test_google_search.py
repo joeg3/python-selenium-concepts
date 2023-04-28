@@ -1,46 +1,31 @@
-#from telnetlib import EC
-from time import sleep
-import pytest
-import unittest
-
+from selenium import webdriver
 from selenium.webdriver.common.by import By
 
 from pages.google_home_page import HomePage
 
-from ddt import ddt, data, unpack, file_data
+# Basic test with a script, not using Page Objects. This doesn't even use fixtures,
+# but locked into hard coded browser, url, and test data
+def test_google_search():
+    driver = webdriver.Chrome()
+    driver.get('https://google.com')
+    driver.find_element(By.NAME, 'q').send_keys('packers')
+    driver.find_element(By.NAME, 'btnK').submit()
 
-from utilities.utils import Utils
-
-# @pytest.mark.usefixtures('setup')
-# @ddt
-# @file_data('../testdata/testdata_class.yaml') # Requires PyYAML package
-# class TestSearchGoogle(unittest.TestCase): # ddt needs unittest.TestCase as a parameter here
-
-#     # Do test class setup here
-#     @pytest.fixture(autouse=True)
-#     def class_setup(self):
-#         self.ut = Utils()
+    assert 'packers' in driver.title
 
 # With Page Object Model
-def test_google_search(driver, domain):
-    home_page = HomePage(driver, domain)
+# We can test for different urls, browsers, test data
+def test_google_search_by_clicking_button(driver_for_script, domain, test_data):
+    home_page = HomePage(driver_for_script, domain)
     home_page.load()
-    home_page.wait_for_element_to_be_clickable(By.NAME, 'q')
 
+    search_result_page = home_page.search_by_clicking_button(test_data['search_term'])
+    page_title = search_result_page.get_page_title()
+    assert test_data['search_result'] in page_title
 
-    #home_page.wait_for_presence_of_all_elements(By.XPATH, "//span[contains(text(),'Non Stop') or contains(text(),'2 Stop')]")
-        
-    # Here we have a call for each element
-    #home_page.enterSearchFieldText('Python')
-    #home_page.clickSearchButton()
-
-    # Instead we can combine in one page object method
-    search_result_page = home_page.googleSearch('Python')
-
-    #search_result_page = SearchResults(self.driver)
-    page_title = search_result_page.getPageTitle()
-    assert "Python" in page_title
-
-    #self.ut.assertThatIsUsedOften() # Example of using a utility function
-
-    
+def test_google_search_by_hitting_enter_key(driver_for_script, domain, test_data):
+    home_page = HomePage(driver_for_script, domain)
+    home_page.load()
+    search_result_page = home_page.search_by_hitting_enter_key(test_data['search_term']) #home_page.googleSearch(test_data['search_term'])
+    page_title = search_result_page.get_page_title()
+    assert test_data['search_result'] in page_title

@@ -1,60 +1,34 @@
-from xml import dom
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.support.wait import WebDriverWait
 
 from pages.BasePage import BasePage
 from pages.google_search_results_page import SearchResults
+from utilities.highlighter import highlight
 
 class HomePage(BasePage):
     def __init__(self, driver, domain):
-        super().__init__(driver, domain)
         self.driver = driver
         self.domain = domain
+        self.url_path = ''
+        self.page_url = self.domain + self.url_path
+        super().__init__(driver, domain, self.page_url)
 
-    url_path = ''
+    SEARCH_FIELD = (By.NAME, 'q')
+    SEARCH_BUTTON = (By.XPATH, "//div[@class='FPdoLc lJ9FBc']//input[@name='btnK']")
 
-    # Locators
-    SEARCH_FIELD = 'q'
-    SEARCH_BUTTON = 'btnK'
+    def search_by_clicking_button(self, text):
+        self.wait_for_element_visibility(self.SEARCH_FIELD)
+        search_field = self.find(self.SEARCH_FIELD)
+        search_field.clear()
+        search_field.send_keys(text)
+        self.find(self.SEARCH_BUTTON).click()
+        return SearchResults(self.driver, self.domain)
 
-    def getSearchField(self):
-        return self.driver.find_element(By.NAME, self.SEARCH_FIELD)
-
-    def getSearchButton(self):
-        return self.driver.find_elements(By.NAME, self.SEARCH_BUTTON)[-1] # There are two 'btnK' elements, find_elements() gets a list, and [-1] returns the last one
-
-    def enterSearchFieldText(self, txt):
-        #self.getSearchField().click()
-        self.getSearchField().send_keys(txt)
-        #self.getSearchField().send_keys(Keys.ENTER) # We are instead clicking Search button
-    
-    def clickSearchButton(self):
-        submit_button = self.driver.find_elements(By.NAME, 'btnK')[-1] # There are two 'btnK' elements, find_elements() gets a list, and [-1] returns the last one
-        self.getSearchButton().click()
-
-    # Combines the entering of text and click
-    # Also links to result page by returning reference to it
-    def googleSearch(self, txt):
-        self.enterSearchFieldText(txt)
-        self.clickSearchButton()
-        search_result_page = SearchResults(self.driver, self.domain)
-        return search_result_page
-
-    # Original way we did it. Not sure if breaking out into SEARCH_FIELD, getSearchField(), and enterSearchFieldText() is worth it
-    def search_field(self, search_str):
-        search_field = self.driver.find_element(By.NAME, 'q')
-        search_field.send_keys(search_str)
-
-    # Also original way
-    def click_search(self):
-        submit_button = self.driver.find_elements(By.NAME, 'btnK')[-1] # There are two 'btnK' elements, find_elements() gets a list, and [-1] returns the last one
-        submit_button.click()
-
-    # Actions
-    def load(self):
-        self.driver.get(self.get_landing_page_url())
-
-    def get_landing_page_url(self):
-        return self.domain + self.url_path
+    def search_by_hitting_enter_key(self, text):
+        self.wait_for_element_visibility(self.SEARCH_FIELD)
+        search_field = self.find(self.SEARCH_FIELD)
+        highlight(search_field, 3, "blue", 5)
+        search_field.clear()
+        search_field.send_keys(text)
+        search_field.send_keys(Keys.ENTER)
+        return SearchResults(self.driver, self.domain)
