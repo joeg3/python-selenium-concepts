@@ -1,7 +1,7 @@
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 
-from pages.BasePage import BasePage
+from pages.base_page import BasePage
 from pages.google_search_results_page import SearchResults
 from utilities.highlighter import highlight
 
