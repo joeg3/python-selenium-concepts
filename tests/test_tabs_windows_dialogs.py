@@ -1,5 +1,7 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 from time import sleep
 
@@ -29,3 +31,40 @@ def test_open_tab():
     assert 1 == len(driver.window_handles)
     driver.switch_to.window(new_tab_handle) # Driver pointing to closed orig tab, need to point it to remaining tab
     assert driver.current_url == NEW_TAB_URL
+
+def test_alert():
+    driver = webdriver.Chrome()
+    driver.get("https://bonigarcia.dev/selenium-webdriver-java/dialog-boxes.html")
+    driver.find_element(By.ID, "my-alert").click()
+    WebDriverWait(driver, 10).until(EC.alert_is_present())
+    alert = driver.switch_to.alert
+    assert alert.text == "Hello world!"
+    alert.accept()
+
+def test_confirm():
+    driver = webdriver.Chrome()
+    driver.get("https://bonigarcia.dev/selenium-webdriver-java/dialog-boxes.html")
+    driver.find_element(By.ID, "my-confirm").click()
+    WebDriverWait(driver, 10).until(EC.alert_is_present())
+    confirm = driver.switch_to.alert
+    assert confirm.text == "Is this correct?"
+    confirm.dismiss()
+
+def test_prompt():
+    driver = webdriver.Chrome()
+    driver.get("https://bonigarcia.dev/selenium-webdriver-java/dialog-boxes.html")
+    driver.find_element(By.ID, "my-prompt").click()
+    WebDriverWait(driver, 10).until(EC.alert_is_present())
+    prompt = driver.switch_to.alert
+    prompt.send_keys("Fred")
+    assert prompt.text == "Please enter your name"
+    prompt.accept()
+
+def test_modal_window():
+    driver = webdriver.Chrome()
+    driver.get("https://bonigarcia.dev/selenium-webdriver-java/dialog-boxes.html")
+    driver.find_element(By.ID, "my-modal").click()
+    close = driver.find_element(By.XPATH, "//button[text() = 'Close']")
+    assert close.tag_name == "button"
+    WebDriverWait(driver, 10).until(EC.element_to_be_clickable(close))
+    close.click()

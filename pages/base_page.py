@@ -1,5 +1,10 @@
+from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
+from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import TimeoutException
+
+from sys import platform
 
 class BasePage():
     def __init__(self, driver, domain, page_url):
@@ -44,11 +49,42 @@ class BasePage():
     def wait_for_element_presence(self, locator, timeout=10):
         return WebDriverWait(self.driver, timeout).until(EC.presence_of_element_located(locator))
     
+    def wait_for_element_value_text_presence(self, locator, text, timeout=10):
+        return WebDriverWait(self.driver, timeout).until(EC.text_to_be_present_in_element_value(locator, text))
+    
     def wait_for_element_text_presence(self, locator, text, timeout=10):
         return WebDriverWait(self.driver, timeout).until(EC.text_to_be_present_in_element(locator, text))
     
     def wait_for_element_visibility(self, locator, timeout=10):
         return WebDriverWait(self.driver, timeout).until(EC.visibility_of_element_located(locator))
+    
+    def does_element_exist(self, locator, timeout=10):
+        try:
+            WebDriverWait(self.driver, timeout).until(EC.visibility_of_element_located(locator))
+            self.driver.find_element(*locator)
+        except (NoSuchElementException, TimeoutException):
+            return False
+        else:
+            return True
+        
+    def does_element_contain_text(self, locator, expected_text, timeout=10):
+        try:
+            WebDriverWait(self.driver, timeout).until(EC.text_to_be_present_in_element(locator, expected_text))
+            actual_text = self.driver.find_element(*locator).text
+            assert actual_text == expected_text
+        except (NoSuchElementException, TimeoutException):
+            return False
+        else:
+            return True
+        
+    def clear_text_field(self, locator):
+        """ For fields where standard Selenium clear() method doesn't work """
+        element = self.driver.find_element(*locator)
+        if platform == "darwin": # Mac
+            element.send_keys(Keys.COMMAND, "a")
+        else: # Win or Linux
+            element.send_keys(Keys.CONTROL, "a")
+        element.send_keys(Keys.DELETE)
     
     
 
