@@ -11,7 +11,7 @@ class BasePage():
         self.driver = driver
         self.domain = domain
         self.page_url = page_url
-        print("Opening url: ", self.get_page_url) 
+        print("Opening url: ", self.get_page_url()) 
 
     def load(self):
         self.driver.get(self.get_page_url())

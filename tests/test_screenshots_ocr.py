@@ -69,7 +69,7 @@ def test_get_text_in_screenshot_easyocr():
 
     # Search for text in screenshot
     reader = easyocr.Reader(['en']) # Can read multiple languages, we're just doing English
-    result_array = reader.readtext(screenshot_file, detail = 0) # detail = 0 simplifies output, otherwise you get text box coordinates [x,y], text and model confident level for each piece of text
+    result_array = reader.readtext(screenshot_file, detail=0) # detail=0 simplifies output, otherwise you get text box coordinates [x,y], text and model confident level for each piece of text
 
     print("\n\n############### Start of easyocr text extracted from screenshot ####################")
     print(result_array)

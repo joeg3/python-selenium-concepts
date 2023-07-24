@@ -10,19 +10,17 @@ from webdriver_manager.chrome import ChromeDriverManager
 from webdriver_manager.firefox import GeckoDriverManager
 
 # Static values
-mid_screen = [1440, 900]
-VALID_BROWSERS = ['firefox', 'safari', 'chrome']
+MID_SCREEN = [1440, 900]
+VALID_BROWSERS = ['firefox', 'safari', 'chrome', 'chrome-headless', 'chrome-incognito']
 VALID_ENVS = ['dev', 'stage']
-
-# Default values
 DEFAULT_BROWSER = 'chrome'
 DEFAULT_ENV = 'stage'
 
 def pytest_addoption(parser):
     """ Define CLI options """
     # action="store" stores value in a variable of the same name as the option
-    parser.addoption("--browser", action="store", default="", choices=("firefox", "safari", "chrome"), help="Browser name, options are: 'firefox', 'safari', 'chrome'. Default is firefox")
-    parser.addoption("--env", action="store", default="", choices=("dev", "stage"), help="Test environment name, options are: 'dev', 'stage'. Default is dev")
+    parser.addoption("--browser", action="store", choices=VALID_BROWSERS, help=f"Browser name, options are: {VALID_BROWSERS}. Default is {DEFAULT_BROWSER}")
+    parser.addoption("--env", action="store", choices=VALID_ENVS, help=f"Test environment name, options are: {VALID_ENVS}. Default is {DEFAULT_ENV}")
 
 @pytest.fixture(scope='session')
 def config(request):
@@ -54,10 +52,19 @@ def domain(config):
     return url
 
 @pytest.fixture(scope='session')
+def web_form_page(config):
+    base_url = "https://bonigarcia.dev/selenium-webdriver-java"
+    url = f"{base_url}/web-form.html"
+
+    driver = webdriver.Chrome()
+    driver.get(url)
+    return driver
+
+@pytest.fixture(scope='session')
 def driver_for_script(config):
     """ This fixture is for use with test scripts, not test classes """
-    desiredBrowser = config['test-browser']
-    driver = get_driver(desiredBrowser)
+    browser_arg = config['test-browser']
+    driver = get_driver(browser_arg)
     yield driver
     #driver.close() # Closes currenly open window, leaves others open, execution process of driver remains active
     # b .quit() # Closes all open windows, terminates execution process of driver
@@ -97,10 +104,10 @@ def domain_for_class(request, config):
 def driver_for_class(request, config):
     """ This fixture is for use with test classes, not test scripts """
     desiredBrowser = config['test-browser']
-    web_driver = get_driver(desiredBrowser)
-    request.cls.driver_cls = web_driver # This sets class varible driver
+    driver = get_driver(desiredBrowser)
+    request.cls.driver = driver # This sets class varible driver
     yield
-    web_driver.close() # Closes currenly open window, leaves others open, execution process of driver remains active
+    driver.close() # Closes currenly open window, leaves others open, execution process of driver remains active
     # b .quit() # Closes all open windows, terminates execution process of driver
 
 
@@ -184,28 +191,23 @@ def get_driver(browser):
     # In Windows, I think instead of specifying the path, you can put the drivers in C:\Users\<name>\AppData\Local\Programs\Python\Python39\Scripts
     # On Mac, I think it works without specifying the path because I put the driver in /usr/local/bin which is on my $PATH
 
-    if browser == 'firefox':
-        firefoxOpts = webdriver.FirefoxOptions()
-        firefoxOpts.add_argument('--no-sandbox')
-        ff_service = FirefoxService(GeckoDriverManager().install()) # OR Service('/usr/local/bin/geckodriver')
-        driver = webdriver.Firefox(service=ff_service, options=firefoxOpts)
-        #driver = webdriver.Firefox(GeckoDriverManager().install())
+    if browser.startswith('chrome'):
+        opts = webdriver.ChromeOptions()
+        if browser == "chrome-incognito":
+            opts.add_argument("--incognito")
+        if browser == "chrome-headless":
+            opts.add_argument("--headless=new")
+        driver = webdriver.Chrome(options=opts)
+    elif browser == 'firefox':
+        driver = webdriver.Firefox()
     elif browser == 'safari':
         driver = webdriver.Safari()
-    elif browser == 'chrome':
-        driver = webdriver.Chrome() # I think this works because I have the chrome driver on my $PATH
-        # Another way:
-        # chrome_service = ChromeService('/usr/local/bin/chromedriver')
-        # driver = webdriver.Chrome(service=chrome_service)
-        # Might also see the following, which was deprecated in Selenium 4
-        # driver = webdriver.Chrome(executable_path='/usr/local/bin/chromedriver')
     elif browser == 'edge':
-        edge_service = EdgeService(executable_path='/usr/local/bin/msedgedriver')
-        driver = webdriver.Edge(service=edge_service)
+        driver = webdriver.Edge()
     else:
         driver = webdriver.Chrome()
 
-    driver.set_window_size(mid_screen[0], mid_screen[1])
+    driver.set_window_size(MID_SCREEN[0], MID_SCREEN[1])
     return driver
 
 @pytest.fixture()
@@ -217,6 +219,7 @@ def determine_config_value(cli_value, config_key, config_values, valid_values, d
     """ Determine config value to use. """
     """ Command line has precedence over values from config file, which has precedence over default values """
     """ pytest_addoption() fixture and default values constants ensure valid values, so only verify values from config file """
+    print("cli value: ", cli_value)
     if cli_value:
         return cli_value
     elif config_key in config_values:

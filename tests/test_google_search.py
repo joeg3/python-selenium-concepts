@@ -3,10 +3,14 @@ from selenium.webdriver.common.by import By
 
 from pages.google_home_page import HomePage
 
-# Basic test with a script, not using Page Objects. This doesn't even use fixtures,
-# but locked into hard coded browser, url, and test data
-def test_google_search():
-    driver = webdriver.Chrome()
+# Basic test with a script, not using Page Objects. This doesn't even use fixtures
+# for driver, and is locked into hard coded browser, url, and test data
+def test_google_search(config):
+    browser_arg = config['test-browser']
+    opts = webdriver.ChromeOptions()
+    if browser_arg == "chrome-headless":
+        opts.add_argument("--headless=new")
+    driver = webdriver.Chrome(options=opts)
     driver.get('https://google.com')
     driver.find_element(By.NAME, 'q').send_keys('packers')
     driver.find_element(By.NAME, 'btnK').submit()

@@ -5,6 +5,10 @@ from selenium.webdriver.support import expected_conditions as EC
 
 from time import sleep
 
+""" WebDriver has no distinction between windows and tabs. """
+""" Doing something that opens a new window or tab focuses on it. """
+""" But WebDriver doesn't know what's active. """
+
 def test_open_tab():
     ORIG_TAB_URL = "https://bonigarcia.dev/selenium-webdriver-java/dialog-boxes.html"
     NEW_TAB_URL = "https://bonigarcia.dev/selenium-webdriver-java/web-form.html"
@@ -40,7 +44,6 @@ def test_alert():
     alert = driver.switch_to.alert
     assert alert.text == "Hello world!"
     alert.accept()
-
 def test_confirm():
     driver = webdriver.Chrome()
     driver.get("https://bonigarcia.dev/selenium-webdriver-java/dialog-boxes.html")
