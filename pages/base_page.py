@@ -58,6 +58,10 @@ class BasePage():
     def wait_for_element_visibility(self, locator, timeout=10):
         return WebDriverWait(self.driver, timeout).until(EC.visibility_of_element_located(locator))
     
+    def get_element_text(self, locator, timeout=10):
+        element = WebDriverWait(self.driver, timeout).until(EC.visibility_of_element_located(locator))
+        return element.text
+    
     def does_element_exist(self, locator, timeout=10):
         try:
             WebDriverWait(self.driver, timeout).until(EC.visibility_of_element_located(locator))
@@ -85,28 +89,3 @@ class BasePage():
         else: # Win or Linux
             element.send_keys(Keys.CONTROL, "a")
         element.send_keys(Keys.DELETE)
-    
-    
-
-    ################################### Start New
-    def do_click(self, by_locator):
-        WebDriverWait(self.driver, 10).until(EC.visibility_of_element_located(by_locator)).click()
-
-    def do_send_keys(self, by_locator, text):
-        WebDriverWait(self.driver, 10).until(EC.visibility_of_element_located(by_locator)).send_keys(text)
-
-    def get_element_text(self, by_locator):
-        element = WebDriverWait(self.driver, 10).until(EC.visibility_of_element_located(by_locator))
-        return element.text
-
-    def is_visible(self, by_locator):
-        element = WebDriverWait(self.driver, 10).until(EC.visibility_of_element_located(by_locator))
-        return bool(element)
-
-    def is_present(self, by_locator):
-        element = WebDriverWait(self.driver, 10).until(EC.presence_of_element_located(by_locator))
-        return bool(element)
-
-    def get_title(self, title):
-        WebDriverWait(self.driver, 10).until(EC.title_is(title))
-        return self.driver.title
