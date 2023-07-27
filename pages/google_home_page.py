@@ -5,7 +5,7 @@ from pages.base_page import BasePage
 from pages.google_search_results_page import SearchResults
 from utilities.highlighter import highlight
 
-class HomePage(BasePage):
+class GoogleHomePage(BasePage):
     def __init__(self, driver, domain):
         self.driver = driver
         self.domain = domain

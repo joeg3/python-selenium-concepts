@@ -1,40 +1,17 @@
 import pytest
 import time
+from selenium import webdriver
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver import ActionChains
-from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.select import Select
 
 
-def test_browser_function(driver, locator_test_domain1):
-    # Browser level actions and properties
-    driver.get(locator_test_domain1) # Load url
-    driver.title       # Get browser tab title
-    driver.current_url # Url that's currently present on browser
-    driver.minimize_window()
-    driver.maximize_window()
-    mid_screen = [1440, 900]
-    driver.set_window_size(mid_screen[0], mid_screen[1])
-    driver.get('https://www.google.com')
-    driver.back()
-    driver.refresh()
-    driver.forward()
-    assert driver.current_url == 'https://www.google.com/'
-
-# Running in 'head' mode is where browser is open and you can see actions
-# Running in 'headless' mode the test still runs, but you won't see anything. Some think this is faster
-def test_chrome_options(driver, locator_test_domain4):
-    chrome_options = webdriver.ChromeOptions()
-    chrome_options.add_argument("headless")
-    chrome_options.add_argument("--start-maximized") # This can be done with selenium too
-    service_obj = Service("chromedriver") # chromedriver on path at /usr/local/bin/chromedriver so don't have to give full path
-    driver = webdriver.Chrome(service=service_obj, options=chrome_options)
-
-    driver.implicitly_wait(2)
-    driver.get(locator_test_domain4) # Load url
+# <input name="txtUsername" id="txtUserName" type="text">
+# Element (tag name): input
+# Attributes: name, id, type
+# Values: txtUsername, text
 
 # Examples in this test case are tested on https://rahulshettyacademy.com/angularpractice
 def test_locators1(driver, locator_test_domain1):
@@ -193,60 +170,6 @@ def test_locators4(driver, locator_test_domain4):
     alert.accept() # Click OK button on alert (this alert only has OK button)
     # alert.dismiss() # If alert has OK and Cancel buttons, .accept() clicks OK, and .dismiss() clicks Cancel
 
-# Examples in this test case are tested onhttps://rahulshettyacademy.com/seleniumPractise/#/ for examples on waits
-# Implicit wait: It's like a global timeout
-# driver.implicitly_wait(2) # Driver will wait a max of 2 seconds. If everything loaded in 1 second, then the wait ends. 
-# That makes this better than sleep(2) which would always be for 2 seconds.
-def test_implicit_wait(driver, locator_test_domain5):
-    driver.implicitly_wait(2) # In some cases good to have a global wait
-    driver.get(locator_test_domain5) # Load url
-
-    driver.find_element(By.CSS_SELECTOR, ".search-keyword").send_keys("ber") # Narrow choices by typing in 'ber'
-    time.sleep(2)
-    # For this next line, the implicit wait won't work with find_elements() because selenium will just return a empty list which is valid
-    products = driver.find_elements(By.XPATH, "//div[@class='products']/div") # In products div, there are 3 child div, one for each product
-    assert len(products) == 3
-
-    for product in products:
-        # This is called chaining. We want "//div[@class='products']/div/div/button", but since we already retrieved
-        # a list of products with "//div[@class='products']/div", we can chain off of each one with "div/button"
-        product.find_element(By.XPATH, "div/button").click() # Note we are using product.find_element(), not driver.find_element()
-
-    driver.find_element(By.CSS_SELECTOR, "img[alt='Cart']").click() # Click on cart
-    driver.find_element(By.XPATH, "//button[text()='PROCEED TO CHECKOUT']").click() # Click on cart popup
-
-    driver.find_element(By.CSS_SELECTOR, ".promoCode").send_keys("rahulshettyacademy") # Enter promo code
-    driver.find_element(By.CSS_SELECTOR, ".promoBtn").click() # Click on promo button to apply discount
-    time.sleep(5)
-    driver.find_element(By.CLASS_NAME, "promoInfo").text # See if promo applied
-
-# Examples in this test case are tested onhttps://rahulshettyacademy.com/seleniumPractise/#/ for examples on waits
-# Downside of implicit wait is that every element is waiting even if only one is slow
-def test_exlicit_wait(driver, locator_test_domain5):
-    driver.implicitly_wait(2)
-    driver.get(locator_test_domain5) # Load url
-
-    driver.find_element(By.CSS_SELECTOR, ".search-keyword").send_keys("ber") # Narrow choices by typing in 'ber'
-    time.sleep(2)
-    # For this next line, the implicit wait won't work with find_elements() because selenium will just return a empty list which is valid
-    products = driver.find_elements(By.XPATH, "//div[@class='products']/div") # In products div, there are 3 child div, one for each product
-    assert len(products) == 3
-
-    for product in products:
-        # This is called chaining. We want "//div[@class='products']/div/div/button", but since we already retrieved
-        # a list of products with "//div[@class='products']/div", we can chain off of each one with "div/button"
-        product.find_element(By.XPATH, "div/button").click() # Note we are using product.find_element(), not driver.find_element()
-
-    driver.find_element(By.CSS_SELECTOR, "img[alt='Cart']").click() # Click on cart
-    driver.find_element(By.XPATH, "//button[text()='PROCEED TO CHECKOUT']").click() # Click on cart popup
-
-    
-    driver.find_element(By.CSS_SELECTOR, ".promoCode").send_keys("rahulshettyacademy") # Enter promo code
-    driver.find_element(By.CSS_SELECTOR, ".promoBtn").click() # Click on promo button to apply discount
-    wait = WebDriverWait(driver, 10) # This is longer than our implicit wait for the page, and only applies to element showing promo
-    wait.until(expected_conditions.presence_of_element_located((By.CSS_SELECTOR, ".promoInfo"))) # Wait until promo applied
-    driver.find_element(By.CLASS_NAME, "promoInfo").text # See if promo applied
-
 def test_sum_validation(driver, locator_test_domain5):
     driver.implicitly_wait(2)
     driver.get(locator_test_domain5) # Load url
@@ -314,23 +237,7 @@ def test_mouse_hover(driver, locator_test_domain4):
     action.move_to_element(driver.find_element(By.ID, "mousehover")).perform() # For all of these actions, you always need .perform() on end
     #action.context_click(driver.find_element(By.LINK_TEXT, "Top")).perform()  # Right click
     action.move_to_element(driver.find_element(By.LINK_TEXT, "Reload")).click().perform()
-
-def test_open_tab(driver, locator_test_domain6):
-    # The scope of selenium webdriver is on the original tab and not new tabs, so you have to switch to child window so driver's scope is with new window
-    driver.implicitly_wait(2)
-    driver.get(locator_test_domain6 + "/windows") # Load url
-    driver.find_element(By.LINK_TEXT, "Click Here").click()
-
-    # Browser is on new tab now, but driver is not, need to set driver to new tab
-    open_tabs = driver.window_handles # Returns a list of open tabs, current tab is index 0
-    driver.switch_to.window(open_tabs[1])
-    child_text = driver.find_element(By.TAG_NAME, "h3").text
-    assert child_text == "New Window"
-    driver.close() # Close child tab
-    driver.switch_to.window(open_tabs[0]) # Switch back to original tab
-    parent_text = driver.find_element(By.TAG_NAME, "h3").text
-    assert parent_text == "Opening a new window"
-
+    
 def test_open_frame(driver, locator_test_domain6):
     # You will have to look for an <iframe> tag
     # Like with browser tabs, you have to switch the driver to the frame
@@ -360,7 +267,7 @@ def test_using_javascript(driver, locator_test_domain4):
 
     driver.get_screenshot_as_file("screen.png")
 
-@pytest.mark(skip='Currently failing')
+#@pytest.mark(skip='Currently failing')
 def test_sort(driver, locator_test_domain5):
     driver.implicitly_wait(2) # In some cases good to have a global wait
     driver.get(locator_test_domain5 + "offers") # Load url
@@ -382,3 +289,49 @@ def test_sort(driver, locator_test_domain5):
     # This fails because there are only 5 of many items on webpage, so when I grab the original items before sorting,
     # they are completely different items after sorting, not just different ordering
     # Tutorial first did sort and then compared to sorting the python list:
+
+
+###################################### NEW LOCATOR TESTS ###################################################
+"""
+Two things to focus on:
+1) Identify (locate) elements
+2) Perform action on element
+
+Two types of locators:
+1) Built-in Locators
+- Id
+- Name
+- Linktext and Partial linktext
+- ClassName
+- TagName
+
+2) Customized Locators
+- CSS Selector (uses html elements and attributes)
+    - Tag and Id
+    - Tag and Class
+    - Tag and Attribute
+    - Tag, Class, and Attribute
+- XPath (does not rely on html)
+    - Absolute XPath
+    - Relative XPath
+"""
+def test_locate_by_id():
+    driver = webdriver.Chrome()
+    driver.get("https://demo.nopcommerce.com")
+    driver.maximize_window()
+
+    driver.find_element(By.ID, "small-searchterms").send_keys("Lenovo Thinkpad X1 Carbon Laptop")
+
+def test_locate_by_link_text():
+    driver = webdriver.Chrome()
+    driver.get("https://demo.nopcommerce.com")
+    driver.maximize_window()
+
+    driver.find_element(By.LINK_TEXT, "Register").click()
+
+def test_locate_by_partial_link_text():
+    driver = webdriver.Chrome()
+    driver.get("https://demo.nopcommerce.com")
+    driver.maximize_window()
+
+    driver.find_element(By.PARTIAL_LINK_TEXT, "Reg").click()

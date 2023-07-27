@@ -2,10 +2,7 @@ from time import sleep
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
-
-from pages.google_home_page import HomePage
 
 def test_infinite_scroll():
     """ Selenium Web Driver does not implement scrolling, so we use JavaScript to do it """
