@@ -85,13 +85,14 @@ def test_assert_webdriver_methods():
     driver.quit()  # Close all windows and quit the browser
     
 # Running in 'head' mode is where browser is open and you can see actions
-# Running in 'headless' mode the test still runs, but you won't see anything. Some think this is faster
+# Running in 'headless' mode the test still runs, but you won't see anything. Maybe faster
 def test_chrome_options():
     chrome_options = webdriver.ChromeOptions()
-    chrome_options.add_argument("headless")
+    chrome_options.add_argument("--incognito")
+    chrome_options.add_argument("--headless=new")
     chrome_options.add_argument("--start-maximized") # This can be done with selenium too
-    service_obj = Service("chromedriver") # chromedriver on path at /usr/local/bin/chromedriver so don't have to give full path
-    driver = webdriver.Chrome(service=service_obj, options=chrome_options)
+    driver = webdriver.Chrome(options=chrome_options)
 
     driver.implicitly_wait(2)
     driver.get("https://www.ibm.com") # Load url
+    driver.quit()
