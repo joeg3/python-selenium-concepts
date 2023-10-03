@@ -53,6 +53,7 @@ def domain(config):
 
 @pytest.fixture(scope='session')
 def web_form_page(config):
+    """ Loads test web form page in Chrome """
     base_url = "https://bonigarcia.dev/selenium-webdriver-java"
     url = f"{base_url}/web-form.html"
 
