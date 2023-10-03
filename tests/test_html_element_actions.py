@@ -1,6 +1,17 @@
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.select import Select
 
+def test_send_keys_and_clear(web_form_page):
+    input_element = web_form_page.find_element(By.NAME, "my-text")
+    text_input = "Hi!"
+    input_element.send_keys(text_input)
+    assert text_input == input_element.get_attribute("value")
+
+    input_element.clear()
+    assert "" == input_element.get_attribute("value")
+
+
+#################### Dropdown tests ########################
 """
 <select class="form-select" name="my-select">
     <option selected>Open this select menu</option>
