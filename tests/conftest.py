@@ -52,10 +52,49 @@ def domain(config):
     return url
 
 @pytest.fixture(scope='session')
+def test_home_page(config):
+    """ Loads test home page in Chrome """
+    url = "https://bonigarcia.dev/selenium-webdriver-java"
+
+    driver = webdriver.Chrome()
+    driver.get(url)
+    return driver
+
+@pytest.fixture(scope='session')
 def web_form_page(config):
     """ Loads test web form page in Chrome """
     base_url = "https://bonigarcia.dev/selenium-webdriver-java"
     url = f"{base_url}/web-form.html"
+
+    driver = webdriver.Chrome()
+    driver.get(url)
+    return driver
+
+@pytest.fixture(scope='session')
+def dropdown_menu_page(config):
+    """ Loads test dropdown menu page in Chrome """
+    base_url = "https://bonigarcia.dev/selenium-webdriver-java"
+    url = f"{base_url}/dropdown-menu.html"
+
+    driver = webdriver.Chrome()
+    driver.get(url)
+    return driver
+
+@pytest.fixture(scope='session')
+def mouseover_page(config):
+    """ Loads test mouseover menu page in Chrome """
+    base_url = "https://bonigarcia.dev/selenium-webdriver-java"
+    url = f"{base_url}/mouse-over.html"
+
+    driver = webdriver.Chrome()
+    driver.get(url)
+    return driver
+
+@pytest.fixture(scope='session')
+def loading_images_page(config):
+    """ Loads test loading images page in Chrome that has slow loading images """
+    base_url = "https://bonigarcia.dev/selenium-webdriver-java"
+    url = f"{base_url}/loading-images.html"
 
     driver = webdriver.Chrome()
     driver.get(url)
