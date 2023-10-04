@@ -10,6 +10,25 @@ def test_send_keys_and_clear(web_form_page):
     input_element.clear()
     assert "" == input_element.get_attribute("value")
 
+def test_mouse_click(test_home_page):
+    test_home_page.find_element(By.XPATH, "//a[text()='Navigation']").click()
+    test_home_page.find_element(By.XPATH, "//a[text()='Next']").click()
+    test_home_page.find_element(By.XPATH, "//a[text()='3']").click()
+    test_home_page.find_element(By.XPATH, "//a[text()='2']").click()
+    test_home_page.find_element(By.XPATH, "//a[text()='Previous']").click()
+
+    body_text = test_home_page.find_element(By.TAG_NAME, "body").text
+    assert "Lorem ipsum" in body_text
+
+def test_click_checkbox_and_radio(web_form_page):
+    cb2 = web_form_page.find_element(By.ID, "my-check-2")
+    cb2.click()
+    assert cb2.is_selected()
+
+    r2 = web_form_page.find_element(By.ID, "my-radio-2")
+    r2.click()
+    assert r2.is_selected()
+
 
 #################### Dropdown tests ########################
 """
